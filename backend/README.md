@@ -1,8 +1,28 @@
 # Gawe-Qi — Backend (Laravel 12 + PostgreSQL)
 
 REST API untuk sistem Task Management & Ticketing IT **Gawe-Qi** (codename `taskit`).
-Status: **Fase 3 — scaffold + lapisan database** (migration, seeder, factory, model dari ERD).
-Auth, service layer, dan endpoint API menyusul pada langkah berikutnya.
+Status: **Fase 3 — database + Auth/RBAC selesai.** Modul tiket (service layer + endpoint)
+menyusul pada langkah berikutnya.
+
+## Endpoint Auth (tersedia sekarang)
+| Method | Endpoint | Akses | Fungsi |
+|--------|----------|-------|--------|
+| POST | `/api/auth/login` | publik (rate-limit 6/mnt) | login → token Sanctum + data user |
+| GET | `/api/auth/me` | token | profil user login |
+| POST | `/api/auth/logout` | token | cabut token aktif |
+| GET | `/api/admin/ping` | role: admin | contoh guard RBAC |
+| GET | `/api/it/ping` | role: admin, it_support | contoh guard RBAC |
+
+Login contoh:
+```bash
+curl -X POST http://localhost:8000/api/auth/login \
+  -H "Accept: application/json" \
+  -d "email=admin@gawe-qi.test&password=password"
+# gunakan token: -H "Authorization: Bearer <token>"
+```
+
+Guard RBAC: `->middleware('role:admin,it_support')`. Otorisasi per-tiket di `app/Policies/TicketPolicy.php`.
+Jalankan test: `php artisan test` (11 test auth & RBAC lulus).
 
 ## Prasyarat
 - PHP 8.3+ · Composer

@@ -9,14 +9,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    // Catatan: trait Sanctum HasApiTokens ditambahkan pada tahap Auth
-    // (php artisan install:api) — belum dipasang di tahap Scaffold + Database.
-
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /** @var list<string> */
     protected $fillable = [
