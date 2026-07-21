@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\Api\AdminLogController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\NotificationController;
+use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\TicketController;
 use App\Http\Controllers\Api\TicketMessageController;
 use Illuminate\Http\Request;
@@ -42,6 +44,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/notifications/unread-count', [NotificationController::class, 'unreadCount']);
     Route::post('/notifications/{notification}/read', [NotificationController::class, 'markRead']);
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead']);
+
+    // ---- Laporan & Analytics (admin + IT) ----
+    Route::middleware('role:admin,it_support')->group(function () {
+        Route::get('/reports/summary', [ReportController::class, 'summary']);
+        Route::get('/reports/analytics', [ReportController::class, 'analytics']);
+        Route::get('/reports/export', [ReportController::class, 'exportCsv']);
+    });
+
+    // ---- Log (admin only) — FR-25/26 ----
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/admin/activity-logs', [AdminLogController::class, 'activity']);
+        Route::get('/admin/audit-logs', [AdminLogController::class, 'audit']);
+    });
 
     // Contoh route ber-guard role (bukti RBAC berjalan).
     Route::get('/admin/ping', fn (Request $r) => response()->json(['ok' => true, 'area' => 'admin']))

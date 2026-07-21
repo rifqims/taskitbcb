@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Services\ActivityLogger;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -17,6 +18,8 @@ use Illuminate\Validation\ValidationException;
  */
 class AuthController extends Controller
 {
+    public function __construct(private readonly ActivityLogger $activity) {}
+
     /** POST /api/auth/login — kembalikan token + data user. */
     public function login(LoginRequest $request): JsonResponse
     {
@@ -36,6 +39,8 @@ class AuthController extends Controller
         }
 
         $token = $user->createToken($request->input('device_name', 'spa'))->plainTextToken;
+
+        $this->activity->log($user, 'login');
 
         return response()->json([
             'message' => 'Berhasil masuk.',
@@ -57,6 +62,7 @@ class AuthController extends Controller
     /** POST /api/auth/logout — cabut token yang sedang dipakai. */
     public function logout(Request $request): JsonResponse
     {
+        $this->activity->log($request->user(), 'logout');
         $request->user()->currentAccessToken()->delete();
 
         return response()->json(['message' => 'Berhasil keluar.']);

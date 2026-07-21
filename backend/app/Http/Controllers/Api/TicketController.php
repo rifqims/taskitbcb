@@ -14,6 +14,7 @@ use App\Http\Requests\Ticket\UpdateProgressRequest;
 use App\Http\Resources\TicketResource;
 use App\Models\Ticket;
 use App\Models\TicketActivity;
+use App\Services\ActivityLogger;
 use App\Services\TicketService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -21,7 +22,10 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class TicketController extends Controller
 {
-    public function __construct(private readonly TicketService $tickets) {}
+    public function __construct(
+        private readonly TicketService $tickets,
+        private readonly ActivityLogger $activity,
+    ) {}
 
     /**
      * Daftar tiket dengan filter, pencarian, sorting, pagination.
@@ -91,6 +95,8 @@ class TicketController extends Controller
             CreateTicketData::fromArray($request->validated()),
         );
 
+        $this->activity->log($request->user(), 'ticket.created', $ticket, ['number' => $ticket->ticket_number]);
+
         // Simpan lampiran bila ada (FR-4).
         foreach ($request->file('attachments', []) as $file) {
             $path = $file->store('tickets/'.$ticket->id, 'local');
@@ -127,6 +133,7 @@ class TicketController extends Controller
         $this->authorize('assign', $ticket);
 
         $ticket = $this->tickets->assign($ticket, $request->user());
+        $this->activity->log($request->user(), 'ticket.assigned', $ticket, ['number' => $ticket->ticket_number]);
 
         return new TicketResource($ticket->load(['assignee', 'division', 'category']));
     }
@@ -159,6 +166,9 @@ class TicketController extends Controller
             $request->user(),
             ResolveTicketData::fromArray($request->validated()),
         );
+        $this->activity->log($request->user(), 'ticket.resolved', $ticket, [
+            'number' => $ticket->ticket_number, 'outcome' => $ticket->resolution?->outcome->value,
+        ]);
 
         return new TicketResource($ticket->load('resolution'));
     }
