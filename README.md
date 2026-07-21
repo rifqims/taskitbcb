@@ -8,9 +8,20 @@ mendokumentasikan, dan mengevaluasi setiap pekerjaan IT.
 
 ## Status Proyek
 
-🏗️ **Fase 1 — Analisis & Fondasi Desain: SELESAI (menunggu review).**
-Belum ada kode aplikasi; sesuai kesepakatan kita mengerjakan **bertahap** dan menunggu
-persetujuan di setiap fase. Lihat **[docs/00-roadmap.md](docs/00-roadmap.md)**.
+- ✅ **Fase 1 — Analisis & Fondasi Desain** (disetujui)
+- ✅ **Fase 2 — Wireframe & UI/UX** (disetujui; prototipe hi-fi tema gradasi biru)
+- 🔄 **Fase 3 — Backend:** scaffold Laravel 12 + **lapisan database** (migration, seeder,
+  factory, model) **selesai & terverifikasi**. Berikutnya: Auth + Service Layer + API.
+
+Kita mengerjakan **bertahap** dan menunggu persetujuan di setiap fase.
+Lihat **[docs/00-roadmap.md](docs/00-roadmap.md)**.
+
+## Struktur Repo (monorepo)
+```
+backend/    Laravel 12 REST API (PHP) — lapisan database sudah dibangun
+frontend/   React + Vite SPA (menyusul)
+docs/       Dokumentasi analisis, desain, arsitektur, ERD, UI
+```
 
 ## Dokumentasi (baca berurutan)
 
@@ -23,6 +34,9 @@ persetujuan di setiap fase. Lihat **[docs/00-roadmap.md](docs/00-roadmap.md)**.
 | 4 | [Keputusan Teknologi](docs/04-teknologi-stack.md) | Laravel vs NestJS, Postgres vs MySQL, dll |
 | 5 | [Arsitektur](docs/05-arsitektur.md) | Clean Architecture, SOLID, struktur folder |
 | 6 | [Database & ERD](docs/06-database-erd.md) | ERD, normalisasi, index, foreign key |
+| 7 | [Design System](docs/07-design-system.md) | Token warna (gradasi biru), tipografi, komponen |
+| 8 | [Wireframe](docs/08-wireframe.md) | Susunan tiap layar (dashboard, kanban, detail, laporan) |
+| 9 | [Struktur Halaman per Role](docs/09-struktur-halaman-role.md) | Information architecture Client/IT/Admin |
 
 ## Rencana Stack (rekomendasi, menunggu konfirmasi)
 
