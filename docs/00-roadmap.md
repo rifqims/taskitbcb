@@ -32,10 +32,11 @@ persetujuan Anda, ⬜ = belum mulai.
 - ✅ Migration 14 tabel domain (dari ERD) — terverifikasi migrate sukses
 - ✅ Model Eloquent + relasi + scope antrian + helper SLA
 - ✅ Seeder + Factory (data referensi + akun demo + tiket contoh) — terverifikasi seed sukses
-- ✅ Auth (Sanctum) + RBAC middleware + TicketPolicy — **11 test lulus**
-- ⬜ Modul Tiket (buat, ambil, status, progress, resolusi) + Service Layer
-- ⬜ Chat, Activity Log, Audit Log
-- ⬜ API + OpenAPI docs + test
+- ✅ Auth (Sanctum) + RBAC middleware + TicketPolicy
+- ✅ Modul Tiket + Service Layer (buat, ambil/kunci, progress, status, resolusi) — **20 test lulus**
+- ⬜ Chat (pesan, mention, lampiran) + notifikasi
+- ⬜ Activity Log & Audit Log (cross-cutting)
+- ⬜ Laporan & Analytics + OpenAPI docs
 
 ## Fase 4 — Frontend Development  ⬜
 - Scaffold React + Vite + Tailwind + shadcn
