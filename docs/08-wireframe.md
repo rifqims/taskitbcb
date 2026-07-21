@@ -65,9 +65,33 @@ Tab **Timeline** = ActivityTimeline (dibuat, diambil, status berubah, progress, 
 Form **Tidak Bisa Dikerjakan** muncul sebagai dialog wajib isi: Alasan, Berita Acara,
 Rekomendasi, Catatan.
 
-## 6. Laporan & Analytics (fase setelah MVP, tapi dirancang sekarang)
-Grid StatCard + grafik (Line: task/bulan; Donut: per kategori; Bar: Top 10 divisi/teknisi).
-Filter periode (harian/mingguan/bulanan/tahunan) + tombol Export (Excel/PDF/CSV).
+## 6. Laporan (tampilan tabel — revisi sesuai permintaan)
+Halaman Laporan berbentuk **tabel** dengan **toolbar** di atas dan **pagination** di bawah:
+- **Search** (judul / nomor tiket).
+- **Filter rentang tanggal:** Tanggal Mulai & Tanggal Akhir.
+- **Sort judul:** A–Z / Z–A.
+- **Filter waktu penyelesaian:** Tercepat / Terlama.
+- **Filter prioritas:** Semua / Normal / High / Urgent.
+- **Export:** Excel / PDF / CSV.
+- Kolom tabel: No. Tiket, Judul, Divisi, Kategori, Prioritas, Status, Waktu Selesai, Teknisi, Tanggal.
+- **Pagination** (‹ 1 2 3 … ›) + info "Menampilkan x–y dari N".
+
+*(Dashboard Analytics dengan grafik interaktif — Line/Donut/Bar, Top 10 — tetap direncanakan
+sebagai halaman terpisah pada fase setelah MVP.)*
+
+## 6b. Kalender Deadline
+Tampilan bulanan (grid Sen–Min). Setiap tiket muncul sebagai pill berwarna prioritas pada
+**tanggal jatuh tempo SLA**-nya. Gunanya: melihat sebaran tenggat & beban kerja dalam sebulan
+sekilas, lalu klik pill → detail tiket. (Menjawab "untuk apa kalender": ini **peta deadline**,
+bukan penjadwalan manual.)
+
+## 6c. Profil Akun (CRUD akun)
+Halaman profil (diakses dari footer sidebar) berisi:
+- **Foto:** ganti / hapus foto.
+- **Data diri:** nama, email, no. telepon, divisi, jabatan → Simpan.
+- **Keamanan:** ubah password.
+- **Zona berbahaya:** nonaktifkan akun & **hapus akun permanen** (riwayat tiket tetap disimpan
+  untuk audit — akun tidak bisa login lagi). Aksi hapus dikonfirmasi lewat dialog.
 
 ## 7. Responsif
 - **Desktop:** sidebar penuh, detail 2 kolom.

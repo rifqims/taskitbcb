@@ -14,32 +14,41 @@
 ## 2. Token Warna (CSS variables, HSL)
 
 Memakai pola shadcn/ui: satu set variabel untuk light, satu untuk dark. **Brand Gawe-Qi**
-memakai *indigo/violet* sebagai warna utama (energik, modern, netral gender).
+memakai **gradasi biru** sebagai identitas utama:
+`linear-gradient(135deg, #9FD6FE → #2A96EF)` (biru muda ke biru), dengan warna solid
+`#2A96EF` untuk elemen yang butuh teks putih (tombol, bubble chat) agar kontras tetap AA.
 
 ```css
 :root {                        /* LIGHT */
-  --background: 0 0% 100%;
-  --foreground: 224 12% 12%;
-  --card: 0 0% 100%;
-  --muted: 220 14% 96%;
-  --muted-foreground: 220 9% 46%;
-  --border: 220 13% 91%;
-  --primary: 245 75% 59%;      /* indigo Gawe-Qi */
-  --primary-foreground: 0 0% 100%;
-  --ring: 245 75% 59%;
+  --grad: linear-gradient(135deg,#9fd6fe,#2a96ef);   /* identitas Gawe-Qi */
+  --grad-strong: linear-gradient(135deg,#2a96ef,#1668b8); /* utk teks putih */
+  --background: #ffffff;
+  --foreground: #152230;
+  --muted: #eef4fa;            /* netral bias-biru, bukan abu datar */
+  --muted-foreground: #5b6b7d;
+  --border: #e1eaf3;
+  --primary: #2a96ef;          /* biru Gawe-Qi (solid) */
+  --primary-strong: #1a7fd6;
+  --primary-soft: #e3f2fe;
+  --ring: #2a96ef;
 }
-.dark {                        /* DARK */
-  --background: 224 20% 8%;
-  --foreground: 220 14% 92%;
-  --card: 224 18% 11%;
-  --muted: 223 16% 16%;
-  --muted-foreground: 220 10% 60%;
-  --border: 223 14% 20%;
-  --primary: 245 80% 66%;
-  --primary-foreground: 224 20% 8%;
-  --ring: 245 80% 66%;
+:root.dark {                   /* DARK */
+  --background: #0b1017;
+  --foreground: #e5eef7;
+  --muted: #18222e;
+  --muted-foreground: #94a6ba;
+  --border: #233140;
+  --primary: #4ea8f5;
+  --primary-strong: #2a96ef;
+  --primary-soft: #0f2942;
+  --ring: #4ea8f5;
 }
 ```
+
+**Aturan pemakaian gradasi (penting untuk kontras):** gradasi `#9FD6FE→#2A96EF` dipakai pada
+permukaan dekoratif besar — logo, progress bar, ring avatar — di mana **tidak ada teks putih
+kecil**. Untuk tombol primer, bubble chat "saya", dan kartu statistik aksen (yang memuat teks
+putih) dipakai `--grad-strong` (nada lebih gelap) agar rasio kontras teks tetap ≥ 4.5:1.
 
 ### Warna Semantik (status & prioritas) — konsisten di seluruh app
 
