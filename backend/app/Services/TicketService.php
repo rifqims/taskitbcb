@@ -21,6 +21,7 @@ class TicketService
     public function __construct(
         private readonly TicketNumberGenerator $numbers,
         private readonly SlaCalculator $sla,
+        private readonly NotificationService $notifications,
     ) {}
 
     /** Client membuat tiket baru (UC1). */
@@ -74,6 +75,14 @@ class TicketService
         $ticket->refresh();
         $this->log($ticket, $technician, 'assigned', ['technician' => $technician->name]);
 
+        // Notifikasi ke client bahwa tiket diterima (FR-21).
+        if ($ticket->creator) {
+            $this->notifications->notify($ticket->creator, 'ticket_accepted', $ticket, [
+                'ticket_number' => $ticket->ticket_number,
+                'technician' => $technician->name,
+            ]);
+        }
+
         return $ticket;
     }
 
@@ -123,6 +132,16 @@ class TicketService
             );
 
             $this->log($ticket, $technician, 'resolved', ['outcome' => $data->outcome->value]);
+
+            // Notifikasi ke client: tiket selesai / ditolak (FR-21).
+            if ($ticket->creator) {
+                $this->notifications->notify(
+                    $ticket->creator,
+                    $completed ? 'ticket_completed' : 'ticket_rejected',
+                    $ticket,
+                    ['ticket_number' => $ticket->ticket_number],
+                );
+            }
 
             return $ticket;
         });

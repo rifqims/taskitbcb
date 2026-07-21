@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\TicketController;
+use App\Http\Controllers\Api\TicketMessageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -30,6 +32,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/tickets/{ticket}/progress', [TicketController::class, 'updateProgress']);
     Route::patch('/tickets/{ticket}/status', [TicketController::class, 'changeStatus']);
     Route::post('/tickets/{ticket}/resolve', [TicketController::class, 'resolve']);
+
+    // ---- Chat pada tiket ----
+    Route::get('/tickets/{ticket}/messages', [TicketMessageController::class, 'index']);
+    Route::post('/tickets/{ticket}/messages', [TicketMessageController::class, 'store']);
+
+    // ---- Notifikasi ----
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::get('/notifications/unread-count', [NotificationController::class, 'unreadCount']);
+    Route::post('/notifications/{notification}/read', [NotificationController::class, 'markRead']);
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead']);
 
     // Contoh route ber-guard role (bukti RBAC berjalan).
     Route::get('/admin/ping', fn (Request $r) => response()->json(['ok' => true, 'area' => 'admin']))
