@@ -1,6 +1,6 @@
 # taskit — Task Management & Ticketing System (Enterprise Grade)
 
-> Codename teknis: **taskit** · Nama brand yang direkomendasikan: **HelixDesk** (belum final)
+> Codename teknis: **taskit** · Nama brand: **Gawe-Qi**
 
 Pusat seluruh permintaan IT Support perusahaan — menggantikan permintaan lewat WhatsApp yang
 mudah hilang. Satu tempat untuk mengelola, memprioritaskan, mengerjakan, mengomunikasikan,

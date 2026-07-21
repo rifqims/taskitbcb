@@ -30,7 +30,14 @@ di awal menghindari *rename* besar-besaran nanti.
 dan tidak mengunci kita hanya ke kata "task" atau "ticket" sehingga produk bisa berkembang
 (misal nanti menambah asset management atau knowledge base).
 
-> ⚠️ **Keputusan Anda dibutuhkan.** Untuk saat ini, semua dokumen dan kode akan memakai
-> **codename `taskit`** (sesuai nama repo `taskitbcb`) sebagai penamaan teknis netral, sehingga
-> keputusan nama *brand* tidak memblokir progres. Nama brand hanya memengaruhi teks yang tampil
-> ke user (logo, judul, email) dan mudah diganti terpusat lewat satu variabel konfigurasi.
+## ✅ KEPUTUSAN FINAL (21 Jul 2026)
+
+Brand yang dipilih pemilik produk: **`Gawe-Qi`**.
+
+- **Makna:** "Gawe" (Jawa/Indonesia) = *kerja/pekerjaan*; "Qi" memberi kesan energi & modern.
+  Nama ini lokal, khas, dan mudah diingat oleh pengguna internal — pas untuk sistem
+  manajemen pekerjaan IT.
+- **Penerapan teknis:** kode & database tetap memakai **codename `taskit`** (netral, sesuai
+  repo `taskitbcb`). Nama brand **Gawe-Qi** hanya muncul di teks yang tampil ke user (logo,
+  judul aplikasi, email, dokumen) dan disimpan di **satu variabel konfigurasi** (`APP_BRAND_NAME`)
+  sehingga mudah diganti terpusat tanpa menyentuh logika.
