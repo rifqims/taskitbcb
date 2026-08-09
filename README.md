@@ -12,7 +12,8 @@ mendokumentasikan, dan mengevaluasi setiap pekerjaan IT.
 - ✅ **Fase 2 — Wireframe & UI/UX** (disetujui; prototipe hi-fi tema gradasi biru)
 - ✅ **Fase 3 — Backend (Laravel 12): SELESAI** — database, Auth/RBAC, Modul Tiket,
   Chat & Notifikasi, Activity/Audit Log, Laporan/Analytics, OpenAPI. **33 test lulus.**
-- 🔜 **Fase 4 — Frontend (React + Vite):** belum mulai.
+- 🔄 **Fase 4 — Frontend (React + Vite): slice inti selesai** (build hijau) — login+RBAC,
+  dashboard, daftar & detail tiket (chat + aksi), buat tiket, notifikasi, laporan, profil.
 
 Kita mengerjakan **bertahap** dan menunggu persetujuan di setiap fase.
 Lihat **[docs/00-roadmap.md](docs/00-roadmap.md)**.

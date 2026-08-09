@@ -39,11 +39,15 @@ persetujuan Anda, ⬜ = belum mulai.
 - ✅ Laporan & Analytics (summary, analytics, export CSV)
 - ✅ Dokumentasi OpenAPI (`docs/api/openapi.yaml`)
 
-## Fase 4 — Frontend Development  ⬜
-- Scaffold React + Vite + Tailwind + shadcn
-- App shell (sidebar, command palette, theme, breadcrumb)
-- Auth flow + guard RBAC
-- Dashboard + Table/Kanban/Calendar + Detail tiket + Chat realtime
+## Fase 4 — Frontend Development  🔄 SLICE INTI SELESAI (build hijau)
+- ✅ Scaffold React + Vite + TypeScript + Tailwind v4 (`frontend/`)
+- ✅ App shell (sidebar & topbar role-based, theme toggle, badge notifikasi)
+- ✅ Auth flow (login token Sanctum) + guard RBAC (route & menu per role)
+- ✅ Dashboard (stat cards + antrian prioritas)
+- ✅ Daftar tiket (tabel + filter/search/pagination) + Buat Tiket
+- ✅ Detail tiket: chat (polling realtime) + aksi (Ambil/Progress/Selesai/Tolak)
+- ✅ Notifikasi in-app, Laporan (grafik + export CSV), Profil
+- ⬜ Lanjutan: Kanban drag-drop, Calendar view, command palette (⌘K), Master Data admin
 
 ## Fase 5 — Integrasi Lanjutan  ⬜
 - Notifikasi (in-app → email/PWA), Report & Export (Excel/PDF/CSV), Analytics

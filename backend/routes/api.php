@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AdminLogController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\NotificationController;
+use App\Http\Controllers\Api\ReferenceController;
 use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\TicketController;
 use App\Http\Controllers\Api\TicketMessageController;
@@ -25,6 +26,9 @@ Route::post('/auth/login', [AuthController::class, 'login'])
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/auth/me', [AuthController::class, 'me']);
     Route::post('/auth/logout', [AuthController::class, 'logout']);
+
+    // Data referensi untuk form.
+    Route::get('/references', [ReferenceController::class, 'index']);
 
     // ---- Modul Tiket ----
     Route::get('/tickets', [TicketController::class, 'index']);
