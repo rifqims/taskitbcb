@@ -43,6 +43,25 @@ class TicketModuleTest extends TestCase
         $this->assertNotNull(Ticket::first()->sla_due_at);
     }
 
+    public function test_new_ticket_notifies_technicians_and_admin(): void
+    {
+        [$division, $category] = $this->refData();
+        $it = User::factory()->itSupport()->create();
+        $admin = User::factory()->admin()->create();
+        $client = User::factory()->client()->create();
+
+        $this->actingAs($client)->postJson('/api/tickets', [
+            'title' => 'Printer macet', 'description' => 'tidak bisa cetak',
+            'division_id' => $division->id, 'sender_name' => 'Rana',
+            'category_id' => $category->id, 'priority' => 'high',
+        ])->assertCreated();
+
+        $this->assertDatabaseHas('notifications', ['user_id' => $it->id, 'type' => 'ticket_created']);
+        $this->assertDatabaseHas('notifications', ['user_id' => $admin->id, 'type' => 'ticket_created']);
+        // Client pembuat tidak ikut dinotifikasi.
+        $this->assertDatabaseMissing('notifications', ['user_id' => $client->id, 'type' => 'ticket_created']);
+    }
+
     public function test_it_support_cannot_create_ticket(): void
     {
         [$division, $category] = $this->refData();

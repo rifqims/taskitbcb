@@ -5,6 +5,7 @@ namespace App\Services;
 use App\DTOs\CreateTicketData;
 use App\DTOs\ResolveTicketData;
 use App\Enums\ResolutionOutcome;
+use App\Enums\Role;
 use App\Enums\TicketStatus;
 use App\Models\Ticket;
 use App\Models\TicketActivity;
@@ -48,6 +49,17 @@ class TicketService
             ]);
 
             $this->log($ticket, $client, 'created', ['priority' => $data->priority->value]);
+
+            // Notifikasi ke semua teknisi IT & admin bahwa ada tiket baru (FR-21).
+            $technicians = User::whereIn('role', [Role::ItSupport->value, Role::Admin->value])
+                ->where('is_active', true)
+                ->get();
+            $this->notifications->notifyMany($technicians, 'ticket_created', $ticket, [
+                'ticket_number' => $ticket->ticket_number,
+                'title' => $ticket->title,
+                'priority' => $ticket->priority->value,
+                'by' => $client->name,
+            ]);
 
             return $ticket;
         });
