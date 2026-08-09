@@ -10,8 +10,9 @@ mendokumentasikan, dan mengevaluasi setiap pekerjaan IT.
 
 - ✅ **Fase 1 — Analisis & Fondasi Desain** (disetujui)
 - ✅ **Fase 2 — Wireframe & UI/UX** (disetujui; prototipe hi-fi tema gradasi biru)
-- 🔄 **Fase 3 — Backend:** scaffold Laravel 12 + **lapisan database** (migration, seeder,
-  factory, model) **selesai & terverifikasi**. Berikutnya: Auth + Service Layer + API.
+- ✅ **Fase 3 — Backend (Laravel 12): SELESAI** — database, Auth/RBAC, Modul Tiket,
+  Chat & Notifikasi, Activity/Audit Log, Laporan/Analytics, OpenAPI. **33 test lulus.**
+- 🔜 **Fase 4 — Frontend (React + Vite):** belum mulai.
 
 Kita mengerjakan **bertahap** dan menunggu persetujuan di setiap fase.
 Lihat **[docs/00-roadmap.md](docs/00-roadmap.md)**.

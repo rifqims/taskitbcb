@@ -1,8 +1,19 @@
 # Gawe-Qi — Backend (Laravel 12 + PostgreSQL)
 
 REST API untuk sistem Task Management & Ticketing IT **Gawe-Qi** (codename `taskit`).
-Status: **Fase 3 — database + Auth/RBAC + Modul Tiket selesai** (20 test lulus).
-Chat, notifikasi, activity/audit log, dan laporan menyusul.
+Status: **Fase 3 — backend SELESAI** (33 test lulus): database, Auth/RBAC, Modul Tiket,
+Chat & Notifikasi, Activity/Audit Log, Laporan/Analytics, dan dokumentasi OpenAPI.
+Dokumentasi API lengkap: [`docs/api/openapi.yaml`](../docs/api/openapi.yaml).
+
+## Ringkasan modul & endpoint
+| Modul | Endpoint |
+|-------|----------|
+| Auth | `POST /auth/login`, `GET /auth/me`, `POST /auth/logout` |
+| Tiket | `GET/POST /tickets`, `GET /tickets/{id}`, `POST .../assign`, `PATCH .../progress`, `PATCH .../status`, `POST .../resolve` |
+| Chat | `GET/POST /tickets/{id}/messages` |
+| Notifikasi | `GET /notifications`, `GET /notifications/unread-count`, `POST /notifications/{id}/read`, `POST /notifications/read-all` |
+| Laporan | `GET /reports/summary`, `GET /reports/analytics`, `GET /reports/export` (CSV) |
+| Log (admin) | `GET /admin/activity-logs`, `GET /admin/audit-logs` |
 
 ## Endpoint Tiket
 | Method | Endpoint | Akses | Fungsi |

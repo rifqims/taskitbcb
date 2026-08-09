@@ -26,17 +26,18 @@ persetujuan Anda, ⬜ = belum mulai.
 - ✅ Design System (token warna, tipografi, spacing, komponen shadcn) → `07-design-system.md`
 - ✅ High-fidelity mock interaktif + dark/light mode → prototipe HTML (Artifact)
 
-## Fase 3 — Backend Development  🔄 BERJALAN
+## Fase 3 — Backend Development  ✅ SELESAI (33 test lulus)
 - ✅ Scaffold Laravel 12, konfigurasi env & Postgres (`backend/`)
 - ✅ Enums (Role, Priority, TicketStatus, ResolutionOutcome)
 - ✅ Migration 14 tabel domain (dari ERD) — terverifikasi migrate sukses
 - ✅ Model Eloquent + relasi + scope antrian + helper SLA
-- ✅ Seeder + Factory (data referensi + akun demo + tiket contoh) — terverifikasi seed sukses
+- ✅ Seeder + Factory (data referensi + akun demo + tiket contoh)
 - ✅ Auth (Sanctum) + RBAC middleware + TicketPolicy
-- ✅ Modul Tiket + Service Layer (buat, ambil/kunci, progress, status, resolusi) — **20 test lulus**
-- ⬜ Chat (pesan, mention, lampiran) + notifikasi
-- ⬜ Activity Log & Audit Log (cross-cutting)
-- ⬜ Laporan & Analytics + OpenAPI docs
+- ✅ Modul Tiket + Service Layer (buat, ambil/kunci, progress, status, resolusi)
+- ✅ Chat (pesan, mention, lampiran) + Notifikasi in-app
+- ✅ Activity Log & Audit Log (cross-cutting, admin)
+- ✅ Laporan & Analytics (summary, analytics, export CSV)
+- ✅ Dokumentasi OpenAPI (`docs/api/openapi.yaml`)
 
 ## Fase 4 — Frontend Development  ⬜
 - Scaffold React + Vite + Tailwind + shadcn

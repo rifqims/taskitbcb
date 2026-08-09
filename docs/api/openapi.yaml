@@ -1,0 +1,384 @@
+openapi: 3.0.3
+info:
+  title: Gawe-Qi API
+  version: 0.1.0
+  description: >
+    REST API sistem Task Management & Ticketing IT **Gawe-Qi** (codename `taskit`).
+    Autentikasi memakai token Bearer (Laravel Sanctum). Semua respons berformat JSON
+    dengan envelope `{ "data": ... }` (atau `{ "message": ... }`).
+    Lihat docs/ untuk analisis, ERD, dan arsitektur.
+servers:
+  - url: http://localhost:8000/api
+    description: Local
+tags:
+  - name: Auth
+  - name: Tickets
+  - name: Chat
+  - name: Notifications
+  - name: Reports
+  - name: Admin Logs
+
+paths:
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Login (dapatkan token)
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string, format: email, example: admin@gawe-qi.test }
+                password: { type: string, example: password }
+                device_name: { type: string, example: spa }
+      responses:
+        '200':
+          description: Berhasil; token + user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+                  data:
+                    type: object
+                    properties:
+                      token: { type: string }
+                      user: { $ref: '#/components/schemas/User' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '429': { description: Terlalu banyak percobaan (rate limit 6/menit) }
+  /auth/me:
+    get:
+      tags: [Auth]
+      summary: Profil user login
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/User' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /auth/logout:
+    post:
+      tags: [Auth]
+      summary: Logout (cabut token aktif)
+      responses:
+        '200': { description: Berhasil keluar }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /tickets:
+    get:
+      tags: [Tickets]
+      summary: Daftar tiket (filter, search, sort, pagination)
+      parameters:
+        - { name: status, in: query, schema: { type: string, enum: [baru, sedang_dikerjakan, pending, selesai, ditolak] } }
+        - { name: priority, in: query, schema: { type: string, enum: [low, medium, high, urgent] } }
+        - { name: category_id, in: query, schema: { type: integer } }
+        - { name: division_id, in: query, schema: { type: integer } }
+        - { name: mine, in: query, schema: { type: boolean }, description: Tiket yang di-assign ke saya (IT) }
+        - { name: overdue, in: query, schema: { type: boolean } }
+        - { name: search, in: query, schema: { type: string } }
+        - { name: sort, in: query, schema: { type: string, enum: [queue, newest, oldest, title_asc, title_desc], default: queue } }
+        - { name: per_page, in: query, schema: { type: integer, default: 15, maximum: 100 } }
+      responses:
+        '200':
+          description: Daftar ter-paginate
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/Ticket' }
+                  meta: { $ref: '#/components/schemas/PaginationMeta' }
+    post:
+      tags: [Tickets]
+      summary: Buat tiket (role client) — nomor & SLA otomatis
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [title, description, division_id, sender_name, category_id, priority]
+              properties:
+                title: { type: string }
+                description: { type: string }
+                division_id: { type: integer }
+                sender_name: { type: string }
+                category_id: { type: integer }
+                priority: { type: string, enum: [low, medium, high, urgent] }
+                location: { type: string }
+                deadline: { type: string, format: date-time }
+                attachments: { type: array, items: { type: string, format: binary } }
+      responses:
+        '201':
+          description: Tiket dibuat
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: { data: { $ref: '#/components/schemas/Ticket' } }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+  /tickets/{ticket}:
+    get:
+      tags: [Tickets]
+      summary: Detail tiket + timeline
+      parameters: [{ $ref: '#/components/parameters/TicketId' }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { type: object, properties: { data: { $ref: '#/components/schemas/Ticket' } } }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /tickets/{ticket}/assign:
+    post:
+      tags: [Tickets]
+      summary: Ambil tiket (IT) — kunci atomik
+      parameters: [{ $ref: '#/components/parameters/TicketId' }]
+      responses:
+        '200': { description: Tiket diambil, status jadi sedang_dikerjakan }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { description: Tiket sudah diambil teknisi lain }
+  /tickets/{ticket}/progress:
+    patch:
+      tags: [Tickets]
+      summary: Ubah progress (assignee/admin)
+      parameters: [{ $ref: '#/components/parameters/TicketId' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [progress]
+              properties: { progress: { type: integer, enum: [0, 25, 50, 75, 100] } }
+      responses:
+        '200': { description: OK }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+  /tickets/{ticket}/status:
+    patch:
+      tags: [Tickets]
+      summary: Ubah status non-terminal (pending/lanjutkan)
+      parameters: [{ $ref: '#/components/parameters/TicketId' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties: { status: { type: string, enum: [sedang_dikerjakan, pending] } }
+      responses:
+        '200': { description: OK }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /tickets/{ticket}/resolve:
+    post:
+      tags: [Tickets]
+      summary: Selesaikan / tolak tiket (assignee/admin)
+      parameters: [{ $ref: '#/components/parameters/TicketId' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [outcome]
+              properties:
+                outcome: { type: string, enum: [completed, rejected] }
+                reason: { type: string, description: Wajib bila rejected }
+                berita_acara: { type: string, description: Wajib bila rejected }
+                recommendation: { type: string, description: Wajib bila rejected }
+                notes: { type: string }
+      responses:
+        '200': { description: OK }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+
+  /tickets/{ticket}/messages:
+    get:
+      tags: [Chat]
+      summary: Daftar pesan chat (kronologis)
+      parameters: [{ $ref: '#/components/parameters/TicketId' }]
+      responses:
+        '200': { description: OK }
+        '403': { $ref: '#/components/responses/Forbidden' }
+    post:
+      tags: [Chat]
+      summary: Kirim pesan (+ lampiran & mention)
+      parameters: [{ $ref: '#/components/parameters/TicketId' }]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                body: { type: string, description: Wajib bila tanpa lampiran }
+                attachments: { type: array, items: { type: string, format: binary } }
+                mentions: { type: array, items: { type: integer }, description: id user yang di-mention }
+      responses:
+        '201': { description: Pesan terkirim }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /notifications:
+    get:
+      tags: [Notifications]
+      summary: Notifikasi saya
+      responses: { '200': { description: OK } }
+  /notifications/unread-count:
+    get:
+      tags: [Notifications]
+      summary: Jumlah notifikasi belum dibaca
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { type: object, properties: { data: { type: object, properties: { count: { type: integer } } } } }
+  /notifications/{notification}/read:
+    post:
+      tags: [Notifications]
+      summary: Tandai satu notifikasi dibaca
+      parameters: [{ name: notification, in: path, required: true, schema: { type: integer } }]
+      responses: { '200': { description: OK }, '403': { $ref: '#/components/responses/Forbidden' } }
+  /notifications/read-all:
+    post:
+      tags: [Notifications]
+      summary: Tandai semua dibaca
+      responses: { '200': { description: OK } }
+
+  /reports/summary:
+    get:
+      tags: [Reports]
+      summary: Ringkasan metrik (admin/IT)
+      parameters:
+        - { name: from, in: query, schema: { type: string, format: date } }
+        - { name: to, in: query, schema: { type: string, format: date } }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      total: { type: integer }
+                      open: { type: integer }
+                      completed: { type: integer }
+                      rejected: { type: integer }
+                      overdue: { type: integer }
+                      avg_completion_minutes: { type: number }
+                      sla_achievement_percent: { type: number }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /reports/analytics:
+    get:
+      tags: [Reports]
+      summary: Data analytics untuk grafik (admin/IT)
+      responses: { '200': { description: OK }, '403': { $ref: '#/components/responses/Forbidden' } }
+  /reports/export:
+    get:
+      tags: [Reports]
+      summary: Export daftar tiket ke CSV (admin/IT)
+      parameters:
+        - { name: status, in: query, schema: { type: string } }
+        - { name: priority, in: query, schema: { type: string } }
+      responses:
+        '200':
+          description: File CSV
+          content: { text/csv: { schema: { type: string, format: binary } } }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /admin/activity-logs:
+    get:
+      tags: [Admin Logs]
+      summary: Activity log (admin)
+      responses: { '200': { description: OK }, '403': { $ref: '#/components/responses/Forbidden' } }
+  /admin/audit-logs:
+    get:
+      tags: [Admin Logs]
+      summary: Audit log before/after (admin)
+      responses: { '200': { description: OK }, '403': { $ref: '#/components/responses/Forbidden' } }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  security:
+    - bearerAuth: []
+  parameters:
+    TicketId:
+      name: ticket
+      in: path
+      required: true
+      schema: { type: integer }
+  responses:
+    Unauthorized: { description: Token tidak valid / belum login }
+    Forbidden: { description: Tidak punya akses (RBAC/Policy) }
+    NotFound: { description: Data tidak ditemukan }
+    ValidationError:
+      description: Validasi gagal
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message: { type: string }
+              errors: { type: object, additionalProperties: { type: array, items: { type: string } } }
+  schemas:
+    User:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        email: { type: string }
+        role: { type: string, enum: [admin, it_support, client] }
+        role_label: { type: string }
+        division_id: { type: integer, nullable: true }
+        phone: { type: string, nullable: true }
+        job_title: { type: string, nullable: true }
+        is_active: { type: boolean }
+    Ticket:
+      type: object
+      properties:
+        id: { type: integer }
+        ticket_number: { type: string, example: TKT-202607-000001 }
+        title: { type: string }
+        description: { type: string }
+        priority: { type: string, enum: [low, medium, high, urgent] }
+        priority_label: { type: string }
+        status: { type: string, enum: [baru, sedang_dikerjakan, pending, selesai, ditolak] }
+        status_label: { type: string }
+        progress: { type: integer, example: 50 }
+        sla_due_at: { type: string, format: date-time, nullable: true }
+        sla_indicator: { type: string, enum: [green, yellow, red] }
+        is_overdue: { type: boolean }
+        sender_name: { type: string }
+        location: { type: string, nullable: true }
+        created_at: { type: string, format: date-time }
+    PaginationMeta:
+      type: object
+      properties:
+        current_page: { type: integer }
+        last_page: { type: integer }
+        per_page: { type: integer }
+        total: { type: integer }
+
+security:
+  - bearerAuth: []
