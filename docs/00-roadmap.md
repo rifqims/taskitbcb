@@ -52,10 +52,12 @@ persetujuan Anda, ⬜ = belum mulai.
 ## Fase 5 — Integrasi Lanjutan  ⬜
 - Notifikasi (in-app → email/PWA), Report & Export (Excel/PDF/CSV), Analytics
 
-## Fase 6 — Testing, Deployment, Maintenance  ⬜
-- Testing (unit/feature/e2e), CI
-- Deploy: Cloudflare Pages + Railway/Render + Neon/Supabase (langkah demi langkah)
-- Panduan maintenance & backup
+## Fase 6 — Testing, Deployment, Maintenance  🔄
+- ✅ Testing backend (33 feature test) + build produksi frontend hijau
+- ✅ Panduan deployment langkah-demi-langkah (`docs/10-deployment.md`) +
+  konfigurasi CORS & SPA redirects siap
+- ⬜ Eksekusi deploy nyata (butuh akun Neon/Railway/Cloudflare Anda)
+- ⬜ CI pipeline (GitHub Actions) & e2e test
 
 ---
 
